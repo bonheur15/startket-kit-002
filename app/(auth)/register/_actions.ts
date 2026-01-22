@@ -23,21 +23,21 @@ export const signUp = async (_: SignUpState, formData: FormData) => {
     return { error: "Name, email, and password are required." };
   }
 
+  let result: Awaited<ReturnType<typeof auth.api.signUpEmail>>;
   try {
-    const result = await auth.api.signUpEmail({
+    result = await auth.api.signUpEmail({
       body: { name, email, password, callbackURL: getCallbackUrl() },
       returnHeaders: true,
     });
-
-    applySetCookie(result.headers);
-    redirect("/login?signup=1");
   } catch (error) {
-    console.log(error);
     if (error instanceof APIError) {
       return { error: error.message || "Unable to sign up." };
     }
     return { error: "Unable to sign up." };
   }
+
+  applySetCookie(result.headers);
+  redirect("/login?signup=1");
 };
 
 export const signUpWithGoogle = async () => {

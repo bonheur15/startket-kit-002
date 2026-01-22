@@ -5,14 +5,14 @@ type SearchParams = {
   error?: string;
 };
 
-export default function ResetPasswordPage({
+export default async function ResetPasswordPage({
   searchParams,
 }: {
-  searchParams?: SearchParams;
+  searchParams?: Promise<SearchParams>;
 }) {
-  const token = searchParams?.token || "";
-  const error =
-    searchParams?.error || (!token ? "missing_token" : undefined);
+  const params = searchParams ? await searchParams : undefined;
+  const token = params?.token || "";
+  const error = params?.error || (!token ? "missing_token" : undefined);
 
   return <ResetPasswordForm token={token} error={error} />;
 }

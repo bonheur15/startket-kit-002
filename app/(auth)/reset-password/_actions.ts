@@ -27,11 +27,12 @@ export const resetPassword = async (_: ResetState, formData: FormData) => {
     await auth.api.resetPassword({
       body: { newPassword: password, token },
     });
-    redirect("/login?reset=1");
   } catch (error) {
     if (error instanceof APIError) {
       return { error: error.message || "Unable to reset password." };
     }
     return { error: "Unable to reset password." };
   }
+
+  redirect("/login?reset=1");
 };

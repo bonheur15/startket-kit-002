@@ -6,17 +6,18 @@ type SearchParams = {
   signup?: string;
 };
 
-export default function LoginPage({
+export default async function LoginPage({
   searchParams,
 }: {
-  searchParams?: SearchParams;
+  searchParams?: Promise<SearchParams>;
 }) {
+  const params = searchParams ? await searchParams : undefined;
   const statusMessage =
-    searchParams?.verified === "1"
+    params?.verified === "1"
       ? "Email verified. You can sign in now."
-      : searchParams?.reset === "1"
+      : params?.reset === "1"
         ? "Password updated. Sign in with your new password."
-        : searchParams?.signup === "1"
+        : params?.signup === "1"
           ? "Account created. Check your email to verify."
           : undefined;
 
