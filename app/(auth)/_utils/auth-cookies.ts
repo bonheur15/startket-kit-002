@@ -46,11 +46,11 @@ const parseSetCookie = (cookie: string) => {
   return { name: name.trim(), value, options };
 };
 
-export const applySetCookie = (headers?: Headers | null) => {
+export const applySetCookie = async (headers?: Headers | null) => {
   if (!headers) return;
   const setCookie = headers.get("set-cookie");
   if (!setCookie) return;
-  const store = cookies();
+  const store = await cookies();
   for (const cookie of splitSetCookieHeader(setCookie)) {
     const parsed = parseSetCookie(cookie);
     if (parsed.name) store.set(parsed.name, parsed.value, parsed.options);

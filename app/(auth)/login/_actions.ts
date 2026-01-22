@@ -34,7 +34,7 @@ export const signIn = async (_: SignInState, formData: FormData) => {
     return { error: "Unable to sign in." };
   }
 
-  applySetCookie(result.headers);
+  await applySetCookie(result.headers);
   redirect("/");
 };
 

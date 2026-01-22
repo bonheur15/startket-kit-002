@@ -36,7 +36,7 @@ export const signUp = async (_: SignUpState, formData: FormData) => {
     return { error: "Unable to sign up." };
   }
 
-  applySetCookie(result.headers);
+  await applySetCookie(result.headers);
   redirect("/login?signup=1");
 };
 
