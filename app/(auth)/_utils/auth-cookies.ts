@@ -48,10 +48,20 @@ const parseSetCookie = (cookie: string) => {
 
 export const applySetCookie = async (headers?: Headers | null) => {
   if (!headers) return;
-  const setCookie = headers.get("set-cookie");
-  if (!setCookie) return;
   const store = await cookies();
-  for (const cookie of splitSetCookieHeader(setCookie)) {
+  const setCookieValues =
+    typeof (headers as Headers & { getSetCookie?: () => string[] })
+      .getSetCookie === "function"
+      ? (headers as Headers & { getSetCookie: () => string[] }).getSetCookie()
+      : null;
+  const rawCookies =
+    setCookieValues && setCookieValues.length
+      ? setCookieValues
+      : (headers.get("set-cookie")
+          ? splitSetCookieHeader(headers.get("set-cookie") || "")
+          : []);
+  if (!rawCookies.length) return;
+  for (const cookie of rawCookies) {
     const parsed = parseSetCookie(cookie);
     if (parsed.name) store.set(parsed.name, parsed.value, parsed.options);
   }

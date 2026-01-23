@@ -14,7 +14,9 @@ export type SignInState = {
 const getCallbackUrl = () => `${getBaseUrl()}/login?verified=1`;
 
 export const signIn = async (_: SignInState, formData: FormData) => {
-  const email = String(formData.get("email") || "").trim().toLowerCase();
+  const email = String(formData.get("email") || "")
+    .trim()
+    .toLowerCase();
   const password = String(formData.get("password") || "");
 
   if (!email || !password) {
@@ -40,35 +42,11 @@ export const signIn = async (_: SignInState, formData: FormData) => {
 
 export const signInWithGoogle = async () => {
   const result = await auth.api.signInSocial({
-    body: { provider: "google", disableRedirect: true },
+    body: { provider: "google" },
   });
-
-  if (!result?.url) {
+  if (!result.url) {
     throw new Error("Google sign-in is not available.");
   }
 
   redirect(result.url);
-};
-
-export const resendVerification = async (
-  _: SignInState,
-  formData: FormData,
-) => {
-  const email = String(formData.get("email") || "").trim().toLowerCase();
-
-  if (!email) {
-    return { error: "Email is required to resend verification." };
-  }
-
-  try {
-    await auth.api.sendVerificationEmail({
-      body: { email, callbackURL: getCallbackUrl() },
-    });
-    return { message: "Verification email sent. Check your inbox." };
-  } catch (error) {
-    if (error instanceof APIError) {
-      return { error: error.message || "Unable to resend verification." };
-    }
-    return { error: "Unable to resend verification." };
-  }
 };
