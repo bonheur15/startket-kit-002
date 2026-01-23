@@ -14,8 +14,6 @@ export type SignUpState = {
   email?: string;
 };
 
-type SignUpEmailResult = Awaited<ReturnType<typeof auth.api.signUpEmail>>;
-
 const getCallbackUrl = () => `${getBaseUrl()}/login?signup=1`;
 
 export const signUp = async (_: SignUpState, formData: FormData): Promise<SignUpState> => {
@@ -29,12 +27,13 @@ export const signUp = async (_: SignUpState, formData: FormData): Promise<SignUp
     return { error: "Name, email, and password are required." };
   }
 
-  let result: SignUpEmailResult;
   try {
-    result = await auth.api.signUpEmail({
+    const result = await auth.api.signUpEmail({
       body: { name, email, password, callbackURL: getCallbackUrl() },
       returnHeaders: true,
     });
+    await applySetCookie(result.headers);
+    redirect("/login?signup=1");
   } catch (error) {
     if (error instanceof APIError) {
       if (
@@ -52,9 +51,6 @@ export const signUp = async (_: SignUpState, formData: FormData): Promise<SignUp
     }
     return { error: "Unable to sign up." };
   }
-
-  await applySetCookie(result.headers);
-  redirect("/login?signup=1");
 };
 
 export const signUpWithGoogle = async () => {
