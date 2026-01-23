@@ -8,7 +8,7 @@ export type ResetState = {
   error?: string;
 };
 
-export const resetPassword = async (_: ResetState, formData: FormData) => {
+export const resetPassword = async (_: ResetState, formData: FormData): Promise<ResetState> => {
   const token = String(formData.get("token") || "");
   const password = String(formData.get("password") || "");
   const confirm = String(formData.get("confirm") || "");

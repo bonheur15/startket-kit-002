@@ -13,7 +13,7 @@ export type SignInState = {
 
 const getCallbackUrl = () => `${getBaseUrl()}/login?verified=1`;
 
-export const signIn = async (_: SignInState, formData: FormData) => {
+export const signIn = async (_: SignInState, formData: FormData): Promise<SignInState> => {
   const email = String(formData.get("email") || "")
     .trim()
     .toLowerCase();
@@ -23,7 +23,7 @@ export const signIn = async (_: SignInState, formData: FormData) => {
     return { error: "Email and password are required." };
   }
 
-  let result: Awaited<ReturnType<typeof auth.api.signInEmail>>;
+  let result: any;
   try {
     result = await auth.api.signInEmail({
       body: { email, password, callbackURL: getCallbackUrl() },

@@ -12,7 +12,7 @@ export type ResetRequestState = {
 export const requestReset = async (
   _: ResetRequestState,
   formData: FormData,
-) => {
+): Promise<ResetRequestState> => {
   const email = String(formData.get("email") || "").trim().toLowerCase();
 
   if (!email) {

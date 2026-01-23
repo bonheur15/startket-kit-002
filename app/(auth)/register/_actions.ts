@@ -16,7 +16,7 @@ export type SignUpState = {
 
 const getCallbackUrl = () => `${getBaseUrl()}/login?signup=1`;
 
-export const signUp = async (_: SignUpState, formData: FormData) => {
+export const signUp = async (_: SignUpState, formData: FormData): Promise<SignUpState> => {
   const name = String(formData.get("name") || "").trim();
   const email = String(formData.get("email") || "")
     .trim()
@@ -27,7 +27,7 @@ export const signUp = async (_: SignUpState, formData: FormData) => {
     return { error: "Name, email, and password are required." };
   }
 
-  let result: Awaited<ReturnType<typeof auth.api.signUpEmail>>;
+  let result: any;
   try {
     result = await auth.api.signUpEmail({
       body: { name, email, password, callbackURL: getCallbackUrl() },
@@ -80,7 +80,7 @@ export type ExistingEmailState = {
 export const resendVerificationForExisting = async (
   _: ExistingEmailState,
   formData: FormData,
-) => {
+): Promise<ExistingEmailState> => {
   const email = String(formData.get("email") || "").trim().toLowerCase();
   if (!email) {
     return { error: "Email is required.", email };
@@ -112,7 +112,7 @@ export const resendVerificationForExisting = async (
 export const requestPasswordResetForExisting = async (
   _: ExistingEmailState,
   formData: FormData,
-) => {
+): Promise<ExistingEmailState> => {
   const email = String(formData.get("email") || "").trim().toLowerCase();
   if (!email) {
     return { error: "Email is required.", email };
