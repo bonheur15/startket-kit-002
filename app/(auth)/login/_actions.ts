@@ -11,6 +11,8 @@ export type SignInState = {
   message?: string;
 };
 
+type SignInEmailResult = Awaited<ReturnType<typeof auth.api.signInEmail>>;
+
 const getCallbackUrl = () => `${getBaseUrl()}/login?verified=1`;
 
 export const signIn = async (_: SignInState, formData: FormData): Promise<SignInState> => {
@@ -23,7 +25,7 @@ export const signIn = async (_: SignInState, formData: FormData): Promise<SignIn
     return { error: "Email and password are required." };
   }
 
-  let result: any;
+  let result: SignInEmailResult;
   try {
     result = await auth.api.signInEmail({
       body: { email, password, callbackURL: getCallbackUrl() },
