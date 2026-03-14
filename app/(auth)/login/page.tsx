@@ -1,4 +1,5 @@
 import LoginForm from "./_components/login-form";
+import { googleEnabled } from "@/lib/app-config";
 
 type SearchParams = {
   verified?: string;
@@ -21,5 +22,10 @@ export default async function LoginPage({
           ? "Account created. Check your email to verify."
           : undefined;
 
-  return <LoginForm statusMessage={statusMessage} />;
+  return (
+    <LoginForm
+      googleEnabled={googleEnabled}
+      statusMessage={statusMessage}
+    />
+  );
 }
