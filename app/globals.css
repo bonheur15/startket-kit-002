@@ -51,24 +51,24 @@
   --font-ibm-plex-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo,
     Monaco, Consolas, "Liberation Mono", monospace;
   --radius: 0.625rem;
-  --background: oklch(0.97 0.018 84);
-  --foreground: oklch(0.24 0.02 258);
-  --card: oklch(0.995 0.005 84);
-  --card-foreground: oklch(0.24 0.02 258);
-  --popover: oklch(0.995 0.005 84);
-  --popover-foreground: oklch(0.24 0.02 258);
-  --primary: oklch(0.41 0.07 210);
-  --primary-foreground: oklch(0.99 0.005 84);
-  --secondary: oklch(0.94 0.012 82);
-  --secondary-foreground: oklch(0.24 0.02 258);
-  --muted: oklch(0.94 0.012 82);
-  --muted-foreground: oklch(0.47 0.02 257);
-  --accent: oklch(0.9 0.04 76);
-  --accent-foreground: oklch(0.24 0.02 258);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.88 0.015 82);
-  --input: oklch(0.88 0.015 82);
-  --ring: oklch(0.58 0.08 210);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -125,12 +125,5 @@
   body {
     @apply bg-background text-foreground font-sans;
     min-height: 100vh;
-    background-image:
-      radial-gradient(circle at top left, rgba(45, 212, 191, 0.12), transparent 26%),
-      radial-gradient(circle at top right, rgba(251, 146, 60, 0.12), transparent 22%);
-  }
-
-  ::selection {
-    background: color-mix(in oklab, var(--primary) 30%, white);
   }
 }

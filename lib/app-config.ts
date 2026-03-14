@@ -1,5 +1,22 @@
 const fallbackBaseUrl = "http://localhost:3000";
 
+const isLocalDevHost = (hostname: string) =>
+  hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+
+const normalizeTrustedOrigin = (value: string) => {
+  try {
+    return new URL(value).origin;
+  } catch {
+    return value;
+  }
+};
+
+const getGoogleClientId = () =>
+  process.env.GOOGLE_CLIENT_ID || process.env.GOOGLE_ID;
+
+const getGoogleClientSecret = () =>
+  process.env.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_SECRET;
+
 export const appName = process.env.APP_NAME?.trim() || "PgBetterAuth Starter";
 
 export const baseURL =
@@ -9,22 +26,38 @@ export const baseURL =
 
 export const appOrigin = new URL(baseURL).origin;
 
-export const trustedOrigins = (
+const configuredTrustedOrigins = (
   process.env.BETTER_AUTH_TRUSTED_ORIGINS || appOrigin
 )
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
 
-export const googleEnabled = Boolean(
-  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET,
-);
+const localDevOrigins = isLocalDevHost(new URL(baseURL).hostname)
+  ? ["http://localhost:3000", "http://127.0.0.1:3000"]
+  : [];
+
+export const getTrustedOrigins = (origin?: string) =>
+  Array.from(
+    new Set(
+      [origin, appOrigin, ...configuredTrustedOrigins, ...localDevOrigins]
+        .filter(Boolean)
+        .map((value) => normalizeTrustedOrigin(value!)),
+    ),
+  );
+
+export const trustedOrigins = getTrustedOrigins();
+
+export const isGoogleEnabled = () =>
+  Boolean(getGoogleClientId() && getGoogleClientSecret());
+
+export const googleEnabled = isGoogleEnabled();
 
 export const googleProvider = googleEnabled
   ? {
       prompt: "select_account" as const,
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: getGoogleClientId()!,
+      clientSecret: getGoogleClientSecret()!,
     }
   : undefined;
 
