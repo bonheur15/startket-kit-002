@@ -3,7 +3,7 @@
 import { BASE_ERROR_CODES } from "@better-auth/core/error";
 import { APIError } from "better-call";
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
+import { getAuth } from "@/auth";
 import { applySetCookie } from "@/app/(auth)/_utils/auth-cookies";
 import { getBaseUrl } from "@/app/(auth)/_utils/auth-urls";
 import { googleEnabled } from "@/lib/app-config";
@@ -22,7 +22,7 @@ export type SignInState = {
   needsVerification?: boolean;
 };
 
-const getCallbackUrl = () => `${getBaseUrl()}/login?verified=1`;
+const getCallbackUrl = async () => `${await getBaseUrl()}/login?verified=1`;
 
 export const signIn = async (_: SignInState, formData: FormData): Promise<SignInState> => {
   const parsed = signInSchema.safeParse({
@@ -42,16 +42,18 @@ export const signIn = async (_: SignInState, formData: FormData): Promise<SignIn
   const { identifier, password } = parsed.data;
 
   try {
+    const auth = await getAuth();
+    const callbackURL = await getCallbackUrl();
     const result = isEmailIdentifier(identifier)
       ? await auth.api.signInEmail({
-          body: { email: identifier, password, callbackURL: getCallbackUrl() },
+          body: { email: identifier, password, callbackURL },
           returnHeaders: true,
         })
       : await auth.api.signInUsername({
           body: {
             username: identifier,
             password,
-            callbackURL: getCallbackUrl(),
+            callbackURL,
           },
           returnHeaders: true,
         });
@@ -84,10 +86,12 @@ export const signInWithGoogle = async () => {
     throw new Error("Google sign-in is not configured.");
   }
 
+  const auth = await getAuth();
+  const baseUrl = await getBaseUrl();
   const result = (await auth.api.signInSocial({
     body: {
       provider: "google",
-      callbackURL: `${getBaseUrl()}/`,
+      callbackURL: `${baseUrl}/`,
       disableRedirect: true,
     },
     returnHeaders: true,

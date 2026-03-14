@@ -3,7 +3,7 @@
 import { BASE_ERROR_CODES } from "@better-auth/core/error";
 import { APIError } from "better-call";
 import { eq } from "drizzle-orm";
-import { auth } from "@/auth";
+import { getAuth } from "@/auth";
 import { getBaseUrl } from "@/app/(auth)/_utils/auth-urls";
 import { db } from "@/db";
 import { user } from "@/db/schema";
@@ -55,10 +55,12 @@ export const resendVerificationEmail = async (
   const { email } = parsed.data;
 
   try {
+    const auth = await getAuth();
+    const baseUrl = await getBaseUrl();
     await auth.api.sendVerificationEmail({
       body: {
         email,
-        callbackURL: `${getBaseUrl()}/login?verified=1`,
+        callbackURL: `${baseUrl}/login?verified=1`,
       },
     });
 
@@ -102,10 +104,12 @@ export const requestPasswordReset = async (
   const { email } = parsed.data;
 
   try {
+    const auth = await getAuth();
+    const baseUrl = await getBaseUrl();
     await auth.api.requestPasswordReset({
       body: {
         email,
-        redirectTo: `${getBaseUrl()}/reset-password`,
+        redirectTo: `${baseUrl}/reset-password`,
       },
     });
 
