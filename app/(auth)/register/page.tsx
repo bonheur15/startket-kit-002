@@ -1,6 +1,8 @@
 import RegisterForm from "./_components/register-form";
-import { googleEnabled } from "@/lib/app-config";
+import { isGoogleEnabled } from "@/lib/app-config";
+
+export const dynamic = "force-dynamic";
 
 export default function RegisterPage() {
-  return <RegisterForm googleEnabled={googleEnabled} />;
+  return <RegisterForm googleEnabled={isGoogleEnabled()} />;
 }

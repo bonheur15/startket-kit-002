@@ -2,7 +2,7 @@
 
 import { APIError } from "better-call";
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
+import { getAuth } from "@/auth";
 import {
   getValidationMessage,
   passwordResetSchema,
@@ -26,6 +26,7 @@ export const resetPassword = async (_: ResetState, formData: FormData): Promise<
   const { token, password } = parsed.data;
 
   try {
+    const auth = await getAuth();
     await auth.api.resetPassword({
       body: { newPassword: password, token },
     });

@@ -2,10 +2,11 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
+import { getAuth } from "@/auth";
 import { applySetCookie } from "@/app/(auth)/_utils/auth-cookies";
 
 export const signOutAction = async () => {
+  const auth = await getAuth();
   const result = await auth.api.signOut({
     headers: new Headers(await headers()),
     returnHeaders: true,
