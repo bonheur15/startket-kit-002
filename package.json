@@ -1,12 +1,15 @@
 {
-  "name": "starterkit-002",
+  "name": "pg-better-auth-nextjs-drizzle-starterkit",
   "version": "0.1.0",
   "private": true,
+  "description": "Starterkit with PostgreSQL, Better Auth, Next.js App Router, and Drizzle ORM.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio"
