@@ -4,7 +4,7 @@ import { APIError } from "better-call";
 import { redirect } from "next/navigation";
 import { BASE_ERROR_CODES } from "@better-auth/core/error";
 import { USERNAME_ERROR_CODES } from "better-auth/plugins";
-import { auth } from "@/auth";
+import { getAuth } from "@/auth";
 import { applySetCookie } from "@/app/(auth)/_utils/auth-cookies";
 import { getBaseUrl } from "@/app/(auth)/_utils/auth-urls";
 import { googleEnabled } from "@/lib/app-config";
@@ -19,7 +19,7 @@ export type SignUpState = {
   name?: string;
 };
 
-const getCallbackUrl = () => `${getBaseUrl()}/login?signup=1`;
+const getCallbackUrl = async () => `${await getBaseUrl()}/login?signup=1`;
 
 export const signUp = async (_: SignUpState, formData: FormData): Promise<SignUpState> => {
   const parsed = signUpSchema.safeParse({
@@ -45,13 +45,15 @@ export const signUp = async (_: SignUpState, formData: FormData): Promise<SignUp
   const { name, email, username, password } = parsed.data;
 
   try {
+    const auth = await getAuth();
+    const callbackURL = await getCallbackUrl();
     const result = await auth.api.signUpEmail({
       body: {
         name,
         email,
         username,
         password,
-        callbackURL: getCallbackUrl(),
+        callbackURL,
       },
       returnHeaders: true,
     });
@@ -99,10 +101,12 @@ export const signUpWithGoogle = async () => {
     throw new Error("Google sign-up is not configured.");
   }
 
+  const auth = await getAuth();
+  const baseUrl = await getBaseUrl();
   const result = (await auth.api.signInSocial({
     body: {
       provider: "google",
-      callbackURL: `${getBaseUrl()}/`,
+      callbackURL: `${baseUrl}/`,
       disableRedirect: true,
     },
     returnHeaders: true,

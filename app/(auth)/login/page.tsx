@@ -1,5 +1,7 @@
 import LoginForm from "./_components/login-form";
-import { googleEnabled } from "@/lib/app-config";
+import { isGoogleEnabled } from "@/lib/app-config";
+
+export const dynamic = "force-dynamic";
 
 type SearchParams = {
   verified?: string;
@@ -24,7 +26,7 @@ export default async function LoginPage({
 
   return (
     <LoginForm
-      googleEnabled={googleEnabled}
+      googleEnabled={isGoogleEnabled()}
       statusMessage={statusMessage}
     />
   );
