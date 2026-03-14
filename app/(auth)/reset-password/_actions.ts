@@ -3,25 +3,27 @@
 import { APIError } from "better-call";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import {
+  getValidationMessage,
+  passwordResetSchema,
+} from "@/lib/auth-form-schemas";
 
 export type ResetState = {
   error?: string;
 };
 
 export const resetPassword = async (_: ResetState, formData: FormData): Promise<ResetState> => {
-  const token = String(formData.get("token") || "");
-  const password = String(formData.get("password") || "");
-  const confirm = String(formData.get("confirm") || "");
+  const parsed = passwordResetSchema.safeParse({
+    token: formData.get("token"),
+    password: formData.get("password"),
+    confirm: formData.get("confirm"),
+  });
 
-  if (!token) {
-    return { error: "Reset token is missing." };
+  if (!parsed.success) {
+    return { error: getValidationMessage(parsed.error) };
   }
-  if (!password || !confirm) {
-    return { error: "Password and confirmation are required." };
-  }
-  if (password !== confirm) {
-    return { error: "Passwords do not match." };
-  }
+
+  const { token, password } = parsed.data;
 
   try {
     await auth.api.resetPassword({
