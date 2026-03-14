@@ -1,21 +1,22 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { username } from "better-auth/plugins";
 import { HubMail } from "hubmail";
-import { db } from "@/db";
 import { nextCookies } from "better-auth/next-js";
-const appName = process.env.APP_NAME || "Starterkit";
-const baseURL =
-  process.env.BETTER_AUTH_URL ||
-  process.env.NEXT_PUBLIC_APP_URL ||
-  "http://localhost:3000";
-const trustedOrigins = (process.env.BETTER_AUTH_TRUSTED_ORIGINS || baseURL)
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-const hubmail = new HubMail();
-const hubmailFrom =
-  process.env.AUTH_EMAIL_FROM ||
-  `no-reply@${new URL(baseURL).hostname.replace(/:\d+$/, "")}`;
+import { db } from "@/db";
+import {
+  appName,
+  authEmailFrom,
+  baseURL,
+  googleProvider,
+  reservedUsernames,
+  trustedOrigins,
+  usernamePattern,
+} from "@/lib/app-config";
+
+const hubmail = process.env.HUBMAIL_KEY ? new HubMail() : null;
+const authSecret =
+  process.env.BETTER_AUTH_SECRET || "replace-this-starter-secret";
 
 const sendAuthEmail = async ({
   to,
@@ -28,8 +29,15 @@ const sendAuthEmail = async ({
   text: string;
   html: string;
 }) => {
+  if (!hubmail) {
+    console.info(
+      `[auth-email] ${subject}\nTo: ${to}\nText preview:\n${text}\n`,
+    );
+    return;
+  }
+
   await hubmail.send({
-    from: hubmailFrom,
+    from: authEmailFrom,
     to: [to],
     subject,
     text,
@@ -40,18 +48,27 @@ const sendAuthEmail = async ({
 export const auth = betterAuth({
   appName,
   baseURL,
+  secret: authSecret,
   trustedOrigins,
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
-  socialProviders: {
-    google: {
-      prompt: "select_account",
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    },
-  },
-  plugins: [nextCookies()],
+  socialProviders: googleProvider ? { google: googleProvider } : {},
+  plugins: [
+    nextCookies(),
+    username({
+      minUsernameLength: 3,
+      maxUsernameLength: 24,
+      usernameValidator: (value) => {
+        const normalized = value.trim().toLowerCase();
+        return (
+          usernamePattern.test(normalized) &&
+          !reservedUsernames.has(normalized)
+        );
+      },
+      usernameNormalization: (value) => value.trim().toLowerCase(),
+    }),
+  ],
   emailVerification: {
     sendOnSignUp: true,
     sendOnSignIn: true,
