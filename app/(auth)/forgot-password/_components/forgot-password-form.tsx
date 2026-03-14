@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { requestReset } from "../_actions";
 
@@ -8,16 +9,23 @@ export default function ForgotPasswordForm() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold">Reset your password</h1>
-        <p className="text-sm text-zinc-500">
-          We will email you a secure reset link.
-        </p>
+      <div className="space-y-3">
+        <div className="inline-flex w-fit rounded-full bg-[#f3ede2] px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-[#7c5c1d]">
+          Recovery
+        </div>
+        <div className="space-y-2">
+          <h1 className="text-3xl font-semibold tracking-tight text-[#0f172a]">
+            Reset your password
+          </h1>
+          <p className="text-sm leading-6 text-slate-600">
+            Enter your email and we’ll send a secure reset link.
+          </p>
+        </div>
       </div>
 
       <form action={formAction} className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-zinc-700" htmlFor="email">
+          <label className="text-sm font-medium text-slate-800" htmlFor="email">
             Email
           </label>
           <input
@@ -26,33 +34,33 @@ export default function ForgotPasswordForm() {
             type="email"
             autoComplete="email"
             required
-            className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm focus:border-zinc-400 focus:outline-none"
+            className="h-12 w-full rounded-2xl border border-black/10 bg-white px-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#0f766e] focus:outline-none focus:ring-4 focus:ring-[#0f766e]/10"
           />
         </div>
         {state?.message ? (
-          <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
             {state.message}
           </p>
         ) : null}
         {state?.error ? (
-          <p className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+          <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
             {state.error}
           </p>
         ) : null}
         <button
           type="submit"
-          className="w-full rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-500"
+          className="h-12 w-full rounded-2xl bg-[#111827] px-4 text-sm font-semibold text-white transition hover:bg-[#1f2937] disabled:cursor-not-allowed disabled:bg-slate-400"
           disabled={pending}
         >
           {pending ? "Sending..." : "Send reset link"}
         </button>
       </form>
 
-      <div className="text-center text-xs text-zinc-500">
+      <div className="text-center text-sm text-slate-600">
         Remembered your password?{" "}
-        <a href="/login" className="font-medium text-zinc-700 hover:underline">
+        <Link href="/login" className="font-medium text-slate-900 hover:underline">
           Back to sign in
-        </a>
+        </Link>
       </div>
     </div>
   );
