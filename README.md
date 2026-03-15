@@ -44,6 +44,7 @@ BETTER_AUTH_SECRET=replace-with-a-long-random-string
 BETTER_AUTH_URL=http://localhost:3000
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 BETTER_AUTH_TRUSTED_ORIGINS=http://localhost:3000
+SERVER_FETCH_FAMILY=
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 HUBMAIL_KEY=
@@ -54,6 +55,7 @@ Notes:
 
 - `BETTER_AUTH_SECRET` should be a long random secret.
 - `NEXT_PUBLIC_APP_URL` is used by the client auth helper.
+- Local development defaults server-side fetch to IPv4 to avoid Google OAuth `ETIMEDOUT` or `invalid_code` issues on machines with broken IPv6 routing. Set `SERVER_FETCH_FAMILY=6` or clear it if you need different behavior.
 - If `HUBMAIL_KEY` is missing, verification and reset links are logged to the server console instead of being emailed.
 - `AUTH_EMAIL_FROM` is only needed when you want real email delivery.
 
@@ -70,6 +72,8 @@ http://localhost:3000/api/auth/callback/google
 4. Restart the app.
 
 If those variables are not set, the starter hides the Google button and keeps email/password auth working normally.
+
+If Google redirects back with `invalid_code` and your server log shows `fetch failed` or `ETIMEDOUT`, the issue is usually outbound Node fetch networking on your machine, not the OAuth client itself. This starter forces IPv4 for server fetches during local development, and you can override that with `SERVER_FETCH_FAMILY`.
 
 ## Auth behavior
 
